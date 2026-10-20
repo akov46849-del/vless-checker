@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import re
-import requests
 import socket
 import time
 import json
@@ -9,70 +8,58 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-BLACK_URL = "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/BLACK_VLESS_RUS.txt"
-BLACK_MOBILE_URL = "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/BLACK_VLESS_RUS_mobile.txt"
-WHITE_URL = "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/main/WHITE-CIDR-RU-checked.txt"
+# ТВОЙ СПИСОК СЕРВЕРОВ
+CUSTOM_KEYS_TEXT = """
+vless://998f72fe-5039-44e4-84c2-26d84f73421e@138.124.118.130:443?security=reality&encryption=none&pbk=4ltYIatUJFFjrW8ZBDGLJaun0BnYIgxn-jmpmTEDGyc&fp=firefox&type=xhttp&sni=newyork.gosgenarchive.com#США
+vless://8007dda2-aed2-4514-8299-6e3edbdb015b@104.243.44.241:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=us2.findreplayfoals.com&sid=8718c58d3d51db59#США
+vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@104.243.44.241:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=us2.freehiliters.com&sid=8718c58d3d51db59#США
+vless://998f72fe-5039-44e4-84c2-26d84f73421e@45.136.228.194:443?security=reality&encryption=none&pbk=4ltYIatUJFFjrW8ZBDGLJaun0BnYIgxn-jmpmTEDGyc&fp=safari&type=xhttp&sni=losangeles.gosgenarchive.com#США
+vless://998f72fe-5039-44e4-84c2-26d84f73421e@77.110.124.147:443?security=reality&encryption=none&pbk=4ltYIatUJFFjrW8ZBDGLJaun0BnYIgxn-jmpmTEDGyc&fp=firefox&type=xhttp&sni=houston.gosgenarchive.com#США
+vless://998f72fe-5039-44e4-84c2-26d84f73421e@2.56.122.3:443?security=reality&encryption=none&pbk=4ltYIatUJFFjrW8ZBDGLJaun0BnYIgxn-jmpmTEDGyc&fp=safari&type=xhttp&sni=chicago.gosgenarchive.com#США
+vless://88281d02-b387-4fe3-918e-26ed331e6d08@81.17.154.97:443?mode=auto&path=%2Fccxf5snr06b8xxb6&security=tls&alpn=h2&encryption=none&insecure=0&host=is-tw-relay.cdn.cachefleet.com&fp=firefox&type=xhttp&allowInsecure=0&sni=is-tw-relay.cdn.cachefleet.com#США
+vless://7fc953d6-ae75-46fb-a970-10b57d513487@45.139.27.63:443?mode=auto&path=%2Fapi%2Fv2%2F&security=tls&alpn=h2&encryption=none&insecure=0&fp=firefox&type=xhttp&allowInsecure=0&sni=emerge-01.uiu.fyi#США
+vless://b98d4c6e-6770-4a31-8256-a4750cdea0e7@t15.qifei.app:443?security=reality&encryption=none&pbk=0i_xAxYgSNx5NMpK2lOaWGS-CvAiD_LneYPO0MF0owo&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=www.amazon.com#США
+vless://b98d4c6e-6770-4a31-8256-a4750cdea0e7@172.235.58.21:443?security=reality&encryption=none&pbk=0i_xAxYgSNx5NMpK2lOaWGS-CvAiD_LneYPO0MF0owo&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=www.amazon.com#США
+vless://e7a4decb-631e-422b-9749-7e8f54618308@201.58.177.135:443?security=reality&encryption=none&pbk=9mJq2cP3srX_6K1YfMDp1yndvo5CtgL6TEVQ8tm4fVc&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=cdn.jsdelivr.net#США
+vless://92e135b9-4c04-4e7e-8b28-d8074a202cf8@94.228.112.36:2053?mode=gun&security=reality&encryption=none&pbk=huWYSqGaqUTQWhee7SbQrNZ32qxCWQFvjTVkPRLQYTw&fp=firefox&type=grpc&serviceName=grpc&sni=files.polina.lol#США
+vless://9ab9291e-fd72-4af9-b227-93419e90ff2e@45.151.30.245:443?security=reality&encryption=none&pbk=H0_ikooEh725UVXsMCoRPoRYMheLUL_L-xZA3fl_nS4&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=cl-fn-in.movietop24.site&sid=ae641bd0ef87fbfa#Финляндия
+vless://ff0b6ba8-bed0-4c4d-bbc9-23af47582615@91.210.169.181:443?path=%2Fapi%2Fconnect&security=tls&encryption=none&insecure=0&host=wstg.datasynctrue.online&fp=firefox&type=ws&allowInsecure=0&sni=wstg.datasynctrue.online#Финляндия
+vless://ff0b6ba8-bed0-4c4d-bbc9-23af47582615@188.225.33.141:443?path=%2Fapi%2Fconnect&security=tls&encryption=none&insecure=0&host=wstg.datasynctrue.online&fp=firefox&type=ws&allowInsecure=0&sni=wstg.datasynctrue.online#Финляндия
+vless://ff0b6ba8-bed0-4c4d-bbc9-23af47582615@wstg.datasynctrue.online:443?path=%2Fapi%2Fconnect&security=tls&encryption=none&insecure=0&host=wstg.datasynctrue.online&fp=firefox&type=ws&allowInsecure=0&sni=wstg.datasynctrue.online#Финляндия
+vless://92e135b9-4c04-4e7e-8b28-d8074a202cf8@94.228.112.60:7443?mode=gun&security=reality&encryption=none&pbk=36VgwCvCzW3ST22DrfRU7y8mVfm0PM7JpkXQnN9yLiE&fp=firefox&type=grpc&serviceName=grpc&sni=cdn.suzuki.lol#Финляндия
+vless://9ab9291e-fd72-4af9-b227-93419e90ff2e@151.241.166.159:443?security=reality&encryption=none&pbk=tPhBRGpTbyaPFF3W0wpqncSrdNsV5I-eyM3S9CZoeCQ&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl-hsts.zloygo.com&sid=9a26e586f8cadc07#Польша
+vless://8007dda2-aed2-4514-8299-6e3edbdb015b@188.119.123.217:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl2.magazinnarubeva.ru&sid=8718c58d3d51db59#Польша
+vless://8007dda2-aed2-4514-8299-6e3edbdb015b@177.202.96.106:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl3.wolffast.net&sid=8718c58d3d51db59#Польша
+vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@188.119.123.217:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl1.wolffast.net&sid=8718c58d3d51db59#Польша
+vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@177.202.96.14:1443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl2.greenzone12.com&sid=8718c58d3d51db59#Польша
+vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@177.202.96.106:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl1.spidermanshopping.com&sid=8718c58d3d51db59#Польша
+vless://8007dda2-aed2-4514-8299-6e3edbdb015b@177.202.96.14:1443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl3.magazinnarubeva.ru&sid=8718c58d3d51db59#Польша
+vless://258d8fc5-206c-48fd-88df-169dbbe44d3f@103.246.248.20:443?security=reality&encryption=none&pbk=2YbfBDRn1xu5OOVvC6H7Pq0p0gRtZtvSqFS08-M-DUY&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl.atlanta-api.com#Польша
+"""
 
 MAX_WORKERS = 20
 TEST_TIMEOUT = 5
 MAX_LATENCY_MS = 2000
 
+# Добавили США в список стран
 COUNTRIES = {
-    "baltics":     ["lithuania", "estonia", "latvia"],
-    "finland":     ["finland"],
-    "germany":     ["germany"],
-    "sweden":      ["sweden"],
-    "netherlands": ["netherlands"],
-    "poland":      ["poland"],
+    "usa":         ["сша", "usa", "united states"],
+    "finland":     ["финляндия", "finland"],
+    "poland":      ["польша", "poland"],
+    "germany":     ["германия", "germany"],
 }
 
 COUNTRIES_ALL_KEYWORDS = [kw for kws in COUNTRIES.values() for kw in kws]
 
-SKIP_COUNTRY_NAMES = {"anycast", "anycast-ip", "unknown"}
-
-
-
-def parse_country_from_key(key):
-    """Returns (country_name, flag_emoji) parsed from the key's URL fragment."""
-    if '#' not in key:
-        return None, None
-    from urllib.parse import unquote
-    fragment = unquote(key.split('#', 1)[1])
-    match = re.search(
-        r'([A-Z][A-Za-z\u00C0-\u017E](?:[A-Za-z\u00C0-\u017E\s\-]*[A-Za-z\u00C0-\u017E])?)(?:\s*[,|])',
-        fragment
-    )
-    if not match:
-        return None, None
-    country = match.group(1).strip()
-    flag = fragment[:match.start()].strip()
-    return country, flag
-
-
-def fetch_keys(url):
-    resp = requests.get(url, timeout=15)
-    resp.raise_for_status()
-    lines = resp.text.strip().splitlines()
+def fetch_keys_custom():
+    lines = CUSTOM_KEYS_TEXT.strip().splitlines()
     return [line.strip() for line in lines if line.strip().startswith("vless://")]
-
 
 def filter_keys(keys, mode):
     if mode in COUNTRIES:
         keywords = COUNTRIES[mode]
         return [k for k in keys if any(kw in k.lower() for kw in keywords)]
-    if mode == "other":
-        return [k for k in keys if not any(kw in k.lower() for kw in COUNTRIES_ALL_KEYWORDS) and "russia" not in k.lower()]
-    if mode == "russia":
-        return [k for k in keys if "russia" in k.lower()]
-    if mode.startswith("w_"):
-        country = mode[2:]
-        if country in COUNTRIES:
-            keywords = COUNTRIES[country]
-            return [k for k in keys if any(kw in k.lower() for kw in keywords)]
-        if country == "other":
-            return [k for k in keys if not any(kw in k.lower() for kw in COUNTRIES_ALL_KEYWORDS) and "russia" not in k.lower()]
     return keys
-
 
 def parse_host_port(key):
     try:
@@ -86,7 +73,6 @@ def parse_host_port(key):
     except Exception:
         pass
     return None, None
-
 
 def test_key(key):
     host, port = parse_host_port(key)
@@ -112,11 +98,7 @@ def test_key(key):
             pass
     return best
 
-
-def check_mode(keys, old_first_seen=None):
-    if old_first_seen is None:
-        old_first_seen = {}
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+def check_mode(keys):
     working = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {executor.submit(test_key, key): key for key in keys}
@@ -127,9 +109,6 @@ def check_mode(keys, old_first_seen=None):
 
     working.sort(key=lambda x: x["latency_ms"])
 
-    for r in working:
-        r["first_seen"] = old_first_seen.get(r["key"], now)
-
     return {
         "best": working[0]["key"] if working else None,
         "top10": working[:10],
@@ -137,84 +116,26 @@ def check_mode(keys, old_first_seen=None):
         "total": len(keys),
     }
 
-
-def load_old_first_seen():
-    try:
-        with open("docs/keys.json", "r", encoding="utf-8") as f:
-            old = json.load(f)
-        seen = {}
-        for mode_data in old.values():
-            top_key = "top10" if "top10" in mode_data else "top5"
-            if isinstance(mode_data, dict) and top_key in mode_data:
-                for entry in mode_data[top_key]:
-                    if "key" in entry and "first_seen" in entry:
-                        seen[entry["key"]] = entry["first_seen"]
-        return seen
-    except Exception:
-        return {}
-
-
 def main():
-    old_first_seen = load_old_first_seen()
-
-    print("Загружаем BLACK ключи...")
-    black_keys = fetch_keys(BLACK_URL)
-    print(f"Загружено {len(black_keys)} BLACK ключей")
-
-    print("Загружаем BLACK mobile ключи...")
-    black_mobile_keys = fetch_keys(BLACK_MOBILE_URL)
-    print(f"Загружено {len(black_mobile_keys)} BLACK mobile ключей")
-    black_keys = list(dict.fromkeys(black_keys + black_mobile_keys))
-    print(f"Итого уникальных BLACK ключей: {len(black_keys)}")
-
-    print("Загружаем WHITE ключи...")
-    white_keys = fetch_keys(WHITE_URL)
-    print(f"Загружено {len(white_keys)} WHITE ключей")
+    print("Загружаем ВАШИ ключи...")
+    all_keys = fetch_keys_custom()
+    print(f"Загружено {len(all_keys)} ключей")
 
     results = {
         "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
     }
 
     for country in list(COUNTRIES.keys()):
-        filtered = filter_keys(black_keys, country)
+        filtered = filter_keys(all_keys, country)
         print(f"[{country}] {len(filtered)} ключей, проверяем...")
-        results[country] = check_mode(filtered, old_first_seen)
+        results[country] = check_mode(filtered)
         print(f"[{country}] Рабочих: {results[country]['total_working']}/{results[country]['total']}")
-
-    other_keys = filter_keys(black_keys, "other")
-    print(f"[other] {len(other_keys)} ключей, группируем по странам...")
-    country_groups = defaultdict(list)
-    country_flags = {}
-    for key in other_keys:
-        name, flag = parse_country_from_key(key)
-        if not name or name.lower() in SKIP_COUNTRY_NAMES:
-            name = "Other"
-            flag = "🌍"
-        country_groups[name].append(key)
-        if name not in country_flags:
-            country_flags[name] = flag
-
-    other_countries = {}
-    for name, keys in country_groups.items():
-        print(f"  [{name}] {len(keys)} ключей, проверяем...")
-        checked = check_mode(keys, old_first_seen)
-        print(f"  [{name}] Рабочих: {checked['total_working']}/{checked['total']}")
-        checked["flag"] = country_flags[name]
-        other_countries[name] = checked
-    results["other_countries"] = other_countries
-
-    for mode in ("w_baltics", "w_finland", "w_germany", "w_sweden", "w_netherlands", "w_poland", "w_other", "russia"):
-        filtered = filter_keys(white_keys, mode)
-        print(f"[{mode}] {len(filtered)} ключей, проверяем...")
-        results[mode] = check_mode(filtered, old_first_seen)
-        print(f"[{mode}] Рабочих: {results[mode]['total_working']}/{results[mode]['total']}")
 
     os.makedirs("docs", exist_ok=True)
     with open("docs/keys.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
     print("Сохранено в docs/keys.json")
-
 
 if __name__ == "__main__":
     main()
