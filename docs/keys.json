@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-11 15:02 UTC",
+  "updated_at": "2026-11-11 22:07 UTC",
   "usa": {
     "best": "vless://8007dda2-aed2-4514-8299-6e3edbdb015b@104.243.44.241:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=us2.findreplayfoals.com&sid=8718c58d3d51db59#США",
     "top10": [
@@ -7,25 +7,25 @@
         "key": "vless://8007dda2-aed2-4514-8299-6e3edbdb015b@104.243.44.241:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=us2.findreplayfoals.com&sid=8718c58d3d51db59#США",
         "host": "104.243.44.241",
         "port": 443,
-        "latency_ms": 40.3
+        "latency_ms": 44.0
       },
       {
         "key": "vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@104.243.44.241:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=us2.freehiliters.com&sid=8718c58d3d51db59#США",
         "host": "104.243.44.241",
         "port": 443,
-        "latency_ms": 44.9
+        "latency_ms": 44.7
       },
       {
         "key": "vless://998f72fe-5039-44e4-84c2-26d84f73421e@138.124.118.130:443?security=reality&encryption=none&pbk=4ltYIatUJFFjrW8ZBDGLJaun0BnYIgxn-jmpmTEDGyc&fp=firefox&type=xhttp&sni=newyork.gosgenarchive.com#США",
         "host": "138.124.118.130",
         "port": 443,
-        "latency_ms": 145.1
+        "latency_ms": 151.0
       },
       {
         "key": "vless://7fc953d6-ae75-46fb-a970-10b57d513487@45.139.27.63:443?mode=auto&path=%2Fapi%2Fv2%2F&security=tls&alpn=h2&encryption=none&insecure=0&fp=firefox&type=xhttp&allowInsecure=0&sni=emerge-01.uiu.fyi#США",
         "host": "45.139.27.63",
         "port": 443,
-        "latency_ms": 594.2
+        "latency_ms": 151.0
       }
     ],
     "total_working": 4,
@@ -38,7 +38,7 @@
         "key": "vless://ff0b6ba8-bed0-4c4d-bbc9-23af47582615@wstg.datasynctrue.online:443?path=%2Fapi%2Fconnect&security=tls&encryption=none&insecure=0&host=wstg.datasynctrue.online&fp=firefox&type=ws&allowInsecure=0&sni=wstg.datasynctrue.online#Финляндия",
         "host": "wstg.datasynctrue.online",
         "port": 443,
-        "latency_ms": 162.4
+        "latency_ms": 154.7
       }
     ],
     "total_working": 1,
@@ -51,43 +51,43 @@
         "key": "vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@188.119.123.217:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl1.wolffast.net&sid=8718c58d3d51db59#Польша",
         "host": "188.119.123.217",
         "port": 443,
-        "latency_ms": 121.4
-      },
-      {
-        "key": "vless://258d8fc5-206c-48fd-88df-169dbbe44d3f@103.246.248.20:443?security=reality&encryption=none&pbk=2YbfBDRn1xu5OOVvC6H7Pq0p0gRtZtvSqFS08-M-DUY&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl.atlanta-api.com#Польша",
-        "host": "103.246.248.20",
-        "port": 443,
-        "latency_ms": 141.4
+        "latency_ms": 137.9
       },
       {
         "key": "vless://8007dda2-aed2-4514-8299-6e3edbdb015b@188.119.123.217:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl2.magazinnarubeva.ru&sid=8718c58d3d51db59#Польша",
         "host": "188.119.123.217",
         "port": 443,
-        "latency_ms": 142.8
-      },
-      {
-        "key": "vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@177.202.96.106:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl1.spidermanshopping.com&sid=8718c58d3d51db59#Польша",
-        "host": "177.202.96.106",
-        "port": 443,
-        "latency_ms": 145.2
-      },
-      {
-        "key": "vless://8007dda2-aed2-4514-8299-6e3edbdb015b@177.202.96.106:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl3.wolffast.net&sid=8718c58d3d51db59#Польша",
-        "host": "177.202.96.106",
-        "port": 443,
-        "latency_ms": 146.4
+        "latency_ms": 141.1
       },
       {
         "key": "vless://8007dda2-aed2-4514-8299-6e3edbdb015b@177.202.96.14:1443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl3.magazinnarubeva.ru&sid=8718c58d3d51db59#Польша",
         "host": "177.202.96.14",
         "port": 1443,
-        "latency_ms": 147.6
+        "latency_ms": 144.2
+      },
+      {
+        "key": "vless://258d8fc5-206c-48fd-88df-169dbbe44d3f@103.246.248.20:443?security=reality&encryption=none&pbk=2YbfBDRn1xu5OOVvC6H7Pq0p0gRtZtvSqFS08-M-DUY&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl.atlanta-api.com#Польша",
+        "host": "103.246.248.20",
+        "port": 443,
+        "latency_ms": 144.6
+      },
+      {
+        "key": "vless://8007dda2-aed2-4514-8299-6e3edbdb015b@177.202.96.106:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl3.wolffast.net&sid=8718c58d3d51db59#Польша",
+        "host": "177.202.96.106",
+        "port": 443,
+        "latency_ms": 146.3
+      },
+      {
+        "key": "vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@177.202.96.106:443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl1.spidermanshopping.com&sid=8718c58d3d51db59#Польша",
+        "host": "177.202.96.106",
+        "port": 443,
+        "latency_ms": 149.0
       },
       {
         "key": "vless://b24ad12f-f6ce-4f0b-a264-d58a76104026@177.202.96.14:1443?security=reality&encryption=none&pbk=jIq_COD-tIXTvgDn-TslFGtB_a8HVgUOOIlUByv8fkg&headerType=&fp=firefox&type=tcp&flow=xtls-rprx-vision&sni=pl2.greenzone12.com&sid=8718c58d3d51db59#Польша",
         "host": "177.202.96.14",
         "port": 1443,
-        "latency_ms": 148.7
+        "latency_ms": 155.8
       }
     ],
     "total_working": 7,
